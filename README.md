@@ -48,6 +48,52 @@ mix deps.get
 mix run --no-halt
 ```
 
+## Quick start (systemd user service)
+
+Build a release and install it somewhere under your home directory:
+
+```sh
+nix develop
+mix deps.get
+MIX_ENV=prod mix release
+
+mkdir -p ~/.local/opt/atuin-ai-server
+cp -a _build/prod/rel/atuin_ai_server/. ~/.local/opt/atuin-ai-server/
+```
+
+Install the config and the user unit:
+
+```sh
+mkdir -p ~/.config/atuin-ai ~/.config/systemd/user
+cp config.example.toml ~/.config/atuin-ai/config.toml
+cp systemd/atuin-ai-server.service ~/.config/systemd/user/
+```
+
+If your config references environment variables such as `CHAT_API_KEY`,
+`BRAVE_API_KEY`, or `FIRECRAWL_API_KEY`, or you want to set `AUTH_TOKEN`,
+put them in `~/.config/atuin-ai/atuin-ai-server.env`:
+
+```sh
+AUTH_TOKEN=change-me
+CHAT_API_KEY=...
+BRAVE_API_KEY=...
+FIRECRAWL_API_KEY=...
+```
+
+Then enable and start the service:
+
+```sh
+systemctl --user daemon-reload
+systemctl --user enable --now atuin-ai-server.service
+```
+
+User services normally start when you log in. To have this one start after
+reboots before login, enable lingering for your user:
+
+```sh
+sudo loginctl enable-linger "$USER"
+```
+
 ## Configuration
 
 One TOML file, path given by `CHAT_CONFIG` (default `./config.toml`; the
