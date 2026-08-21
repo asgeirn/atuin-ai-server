@@ -10,9 +10,6 @@
         "aarch64-linux"
       ];
 
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-      installers = forAllSystems mkInstaller;
-
       mkPkgs = system: import nixpkgs { inherit system; };
 
       mkInstaller =
@@ -116,20 +113,22 @@
               echo "Created optional $config_dir/atuin-ai-server.env"
             fi
 
-            cat <<EOF
-            Installed Atuin AI Server.
-
-            Next steps:
-              1. Edit $config_dir/config.toml
-              2. Optionally add AUTH_TOKEN or API keys to $config_dir/atuin-ai-server.env
-              3. Run: systemctl --user daemon-reload
-              4. Run: systemctl --user enable --now atuin-ai-server.service
-
-            To start the user service automatically after reboot before login:
-              sudo loginctl enable-linger "$USER"
-            EOF
+            printf '%s\n' \
+              "Installed Atuin AI Server." \
+              "" \
+              "Next steps:" \
+              "  1. Edit $config_dir/config.toml" \
+              "  2. Optionally add AUTH_TOKEN or API keys to $config_dir/atuin-ai-server.env" \
+              "  3. Run: systemctl --user daemon-reload" \
+              "  4. Run: systemctl --user enable --now atuin-ai-server.service" \
+              "" \
+              "To start the user service automatically after reboot before login:" \
+              "  sudo loginctl enable-linger \"$USER\""
           '';
         };
+
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+      installers = forAllSystems mkInstaller;
     in
     {
       devShells = forAllSystems (
