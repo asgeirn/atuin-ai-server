@@ -37,9 +37,9 @@ endpoint = "http://host.docker.internal:11434/v1"
 Requires Erlang/OTP, Elixir, and Gleam (versions in the repository's
 `.tool-versions` file).
 
-With Nix flakes enabled, `nix develop` uses the included `flake.nix`
-pinned to `nixos-26.05` to provide matching toolchain versions from
-nixpkgs.
+With Nix flakes enabled, `nix develop` uses the included flake (nixpkgs
+tracked on `nixos-26.05`, pinned via `flake.lock`) to provide compatible
+toolchain versions from nixpkgs.
 
 ```sh
 nix develop
