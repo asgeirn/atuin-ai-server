@@ -11,6 +11,7 @@
       ];
 
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      sourceTree = nixpkgs.lib.cleanSource ./.;
       installers = forAllSystems mkInstaller;
 
       mkPkgs = system: import nixpkgs { inherit system; };
@@ -57,7 +58,7 @@
 
             echo "Copying source..."
             mkdir -p "$source_dir"
-            cp -a ${./.}/. "$source_dir/"
+            cp -a ${sourceTree}/. "$source_dir/"
 
             cd "$source_dir"
 
@@ -155,17 +156,14 @@
         system:
         let
           installer = installers.${system};
-        in
-        {
           install = {
             type = "app";
             program = "${installer}/bin/atuin-ai-server-installer";
           };
-
-          default = {
-            type = "app";
-            program = "${installer}/bin/atuin-ai-server-installer";
-          };
+        in
+        {
+          inherit install;
+          default = install;
         }
       );
 
