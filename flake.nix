@@ -59,6 +59,7 @@
             echo "Copying source..."
             mkdir -p "$source_dir"
             cp -a ${sourceTree}/. "$source_dir/"
+            chmod -R u+w "$source_dir"
 
             cd "$source_dir"
 
