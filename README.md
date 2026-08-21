@@ -57,13 +57,13 @@ release with the pinned toolchain, installs it to
 does not already exist:
 
 ```sh
-nix run .#install
+nix run .#installer
 ```
 
 You can also install from a remote flake:
 
 ```sh
-nix run github:asgeirn/atuin-ai-server#install
+nix run github:asgeirn/atuin-ai-server#installer
 ```
 
 If you want the installer as a package without running it immediately:

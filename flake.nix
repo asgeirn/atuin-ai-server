@@ -11,7 +11,6 @@
       ];
 
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      sourceTree = nixpkgs.lib.cleanSource ./.;
       installers = forAllSystems mkInstaller;
 
       mkPkgs = system: import nixpkgs { inherit system; };
@@ -21,6 +20,7 @@
         let
           pkgs = mkPkgs system;
           beam = pkgs.beam.packages.erlang_27;
+          sourceTree = pkgs.lib.cleanSource ./.;
         in
         pkgs.writeShellApplication {
           name = "atuin-ai-server-installer";
@@ -156,14 +156,15 @@
         system:
         let
           installer = installers.${system};
-          install = {
+          installerApp = {
             type = "app";
             program = "${installer}/bin/atuin-ai-server-installer";
           };
         in
         {
-          inherit install;
-          default = install;
+          installer = installerApp;
+          install = installerApp;
+          default = installerApp;
         }
       );
 
