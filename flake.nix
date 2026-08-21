@@ -48,7 +48,7 @@
             staged_install_dir=""
             previous_install_dir="$install_parent/.atuin-ai-server.previous"
 
-            trap 'rm -rf "$build_dir" "$staged_install_dir"' EXIT
+            trap 'rm -rf "$build_dir"; [ -n "$staged_install_dir" ] && rm -rf "$staged_install_dir"' EXIT
 
             export MIX_HOME="$cache_dir/mix"
             export HEX_HOME="$cache_dir/hex"
@@ -80,12 +80,21 @@
             staged_install_dir="$(mktemp -d "$install_parent/.atuin-ai-server.XXXXXX")"
             cp -a _build/prod/rel/atuin_ai_server/. "$staged_install_dir/"
 
-            rm -rf "$previous_install_dir"
             if [ -e "$install_dir" ]; then
+              rm -rf "$previous_install_dir"
               mv "$install_dir" "$previous_install_dir"
+              if mv "$staged_install_dir" "$install_dir"; then
+                staged_install_dir=""
+                rm -rf "$previous_install_dir"
+              else
+                mv "$previous_install_dir" "$install_dir"
+                echo "Failed to install release; restored previous installation" >&2
+                exit 1
+              fi
+            else
+              mv "$staged_install_dir" "$install_dir"
+              staged_install_dir=""
             fi
-            mv "$staged_install_dir" "$install_dir"
-            rm -rf "$previous_install_dir"
 
             echo "Installing config and systemd unit..."
             mkdir -p "$config_dir" "$systemd_user_dir"
