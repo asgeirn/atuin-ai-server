@@ -11,6 +11,7 @@
       ];
 
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      installers = forAllSystems mkInstaller;
 
       mkPkgs = system: import nixpkgs { inherit system; };
 
@@ -142,7 +143,7 @@
       packages = forAllSystems (
         system:
         let
-          installer = mkInstaller system;
+          installer = installers.${system};
         in
         {
           atuin-ai-server-installer = installer;
@@ -153,7 +154,7 @@
       apps = forAllSystems (
         system:
         let
-          installer = mkInstaller system;
+          installer = installers.${system};
         in
         {
           install = {
