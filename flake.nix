@@ -89,8 +89,12 @@
                 exit 1
               fi
             else
-              mv "$staged_install_dir" "$install_dir"
-              staged_install_dir=""
+              if mv "$staged_install_dir" "$install_dir"; then
+                staged_install_dir=""
+              else
+                echo "Failed to install release" >&2
+                exit 1
+              fi
             fi
 
             echo "Installing config and systemd unit..."
@@ -183,7 +187,6 @@
         in
         {
           installer = installerApp;
-          install = installerApp;
           default = installerApp;
         }
       );
