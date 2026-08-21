@@ -8,3 +8,4 @@ config*.toml
 /.direnv/
 /.nix-hex/
 /.nix-mix/
+/.env
