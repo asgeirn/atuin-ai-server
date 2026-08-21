@@ -60,6 +60,9 @@ does not already exist:
 nix run .#installer
 ```
 
+When run from a local checkout, the installer builds and installs that current
+tree, including uncommitted local changes.
+
 You can also install from a remote flake:
 
 ```sh

@@ -39,13 +39,16 @@
             set -euo pipefail
 
             install_dir="$HOME/.local/opt/atuin-ai-server"
+            install_parent="$HOME/.local/opt"
             config_dir="$HOME/.config/atuin-ai"
             systemd_user_dir="$HOME/.config/systemd/user"
             cache_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/atuin-ai-server"
             build_dir="$(mktemp -d)"
             source_dir="$build_dir/src"
+            staged_install_dir=""
+            previous_install_dir="$install_parent/.atuin-ai-server.previous"
 
-            trap 'rm -rf "$build_dir"' EXIT
+            trap 'rm -rf "$build_dir" "$staged_install_dir"' EXIT
 
             export MIX_HOME="$cache_dir/mix"
             export HEX_HOME="$cache_dir/hex"
@@ -73,21 +76,30 @@
             mix release
 
             echo "Installing release to $install_dir..."
-            rm -rf "$install_dir"
-            mkdir -p "$install_dir"
-            cp -a _build/prod/rel/atuin_ai_server/. "$install_dir/"
+            mkdir -p "$install_parent"
+            staged_install_dir="$(mktemp -d "$install_parent/.atuin-ai-server.XXXXXX")"
+            cp -a _build/prod/rel/atuin_ai_server/. "$staged_install_dir/"
+
+            rm -rf "$previous_install_dir"
+            if [ -e "$install_dir" ]; then
+              mv "$install_dir" "$previous_install_dir"
+            fi
+            mv "$staged_install_dir" "$install_dir"
+            rm -rf "$previous_install_dir"
 
             echo "Installing config and systemd unit..."
             mkdir -p "$config_dir" "$systemd_user_dir"
 
             if [ ! -f "$config_dir/config.toml" ]; then
               cp ${./config.example.toml} "$config_dir/config.toml"
+              chmod 644 "$config_dir/config.toml"
               echo "Created $config_dir/config.toml"
             else
               echo "Keeping existing $config_dir/config.toml"
             fi
 
             cp ${./systemd/atuin-ai-server.service} "$systemd_user_dir/atuin-ai-server.service"
+            chmod 644 "$systemd_user_dir/atuin-ai-server.service"
 
             if [ ! -f "$config_dir/atuin-ai-server.env" ]; then
               : > "$config_dir/atuin-ai-server.env"
