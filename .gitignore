@@ -5,3 +5,7 @@ erl_crash.dump
 config*.toml
 !config.example.toml
 .*_key
+/.direnv/
+/.nix-hex/
+/.nix-mix/
+/.env
