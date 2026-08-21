@@ -48,6 +48,84 @@ mix deps.get
 mix run --no-halt
 ```
 
+## Quick start (systemd user service)
+
+With Nix, the repository exposes an installer package and app. This builds a
+release with the pinned toolchain, installs it to
+`~/.local/opt/atuin-ai-server`, copies the user unit to
+`~/.config/systemd/user/`, and creates `~/.config/atuin-ai/config.toml` if it
+does not already exist:
+
+```sh
+nix run .#installer
+```
+
+When run from a local checkout, the installer builds and installs that current
+tree, including uncommitted local changes.
+
+You can also install from a remote flake:
+
+```sh
+nix run github:asgeirn/atuin-ai-server#installer
+```
+
+If you want the installer as a package without running it immediately:
+
+```sh
+nix build .#atuin-ai-server-installer
+```
+
+To build and install the release manually from a checkout, run:
+
+```sh
+nix develop
+mix deps.get
+MIX_ENV=prod mix release
+
+mkdir -p ~/.local/opt/atuin-ai-server
+cp -a _build/prod/rel/atuin_ai_server/. ~/.local/opt/atuin-ai-server/
+```
+
+The installer creates `~/.config/atuin-ai/config.toml` automatically. For the
+manual path, install the config and the user unit yourself:
+
+```sh
+mkdir -p ~/.config/atuin-ai ~/.config/systemd/user
+cp config.example.toml ~/.config/atuin-ai/config.toml
+cp systemd/atuin-ai-server.service ~/.config/systemd/user/
+```
+
+If your config references environment variables such as `CHAT_API_KEY`,
+`BRAVE_API_KEY`, or `FIRECRAWL_API_KEY`, or you want to set `AUTH_TOKEN`,
+put them in `~/.config/atuin-ai/atuin-ai-server.env`:
+
+```sh
+AUTH_TOKEN=<your-secret-token-here>
+CHAT_API_KEY=...
+BRAVE_API_KEY=...
+FIRECRAWL_API_KEY=...
+```
+
+Then lock the file down so other local users cannot read it:
+
+```sh
+chmod 600 ~/.config/atuin-ai/atuin-ai-server.env
+```
+
+Then enable and start the service:
+
+```sh
+systemctl --user daemon-reload
+systemctl --user enable --now atuin-ai-server.service
+```
+
+User services normally start when you log in. To have this one start after
+reboots before login, enable lingering for your user:
+
+```sh
+sudo loginctl enable-linger "$USER"
+```
+
 ## Configuration
 
 One TOML file, path given by `CHAT_CONFIG` (default `./config.toml`; the

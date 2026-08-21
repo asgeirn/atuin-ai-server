@@ -1,0 +1,16 @@
+[Unit]
+Description=Atuin AI Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.local/opt/atuin-ai-server
+Environment=CHAT_CONFIG=%h/.config/atuin-ai/config.toml
+EnvironmentFile=-%h/.config/atuin-ai/atuin-ai-server.env
+ExecStart=%h/.local/opt/atuin-ai-server/bin/atuin_ai_server start
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
