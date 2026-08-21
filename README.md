@@ -50,7 +50,30 @@ mix run --no-halt
 
 ## Quick start (systemd user service)
 
-Build a release and install it somewhere under your home directory:
+With Nix, the repository exposes an installer package and app. This builds a
+release with the pinned toolchain, installs it to
+`~/.local/opt/atuin-ai-server`, copies the user unit to
+`~/.config/systemd/user/`, and creates `~/.config/atuin-ai/config.toml` if it
+does not already exist:
+
+```sh
+nix run .#install
+```
+
+You can also install from a remote flake:
+
+```sh
+nix run github:asgeirn/atuin-ai-server#install
+```
+
+If you want the installer as a package without running it immediately:
+
+```sh
+nix build .#atuin-ai-server-installer
+```
+
+Without Nix, build a release and install it somewhere under your home
+directory:
 
 ```sh
 nix develop
@@ -61,7 +84,8 @@ mkdir -p ~/.local/opt/atuin-ai-server
 cp -a _build/prod/rel/atuin_ai_server/. ~/.local/opt/atuin-ai-server/
 ```
 
-Install the config and the user unit:
+The installer creates `~/.config/atuin-ai/config.toml` automatically. For the
+manual path, install the config and the user unit yourself:
 
 ```sh
 mkdir -p ~/.config/atuin-ai ~/.config/systemd/user
