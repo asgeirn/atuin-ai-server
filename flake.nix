@@ -69,8 +69,6 @@
 
             echo "Fetching dependencies and building release..."
             mix deps.get --only prod
-            mix deps.compile
-            mix compile
             mix release
 
             echo "Installing release to $install_dir..."
@@ -103,7 +101,7 @@
 
             if [ ! -f "$config_dir/config.toml" ]; then
               cp ${./config.example.toml} "$config_dir/config.toml"
-              chmod 644 "$config_dir/config.toml"
+              chmod 600 "$config_dir/config.toml"
               echo "Created $config_dir/config.toml"
             else
               echo "Keeping existing $config_dir/config.toml"
