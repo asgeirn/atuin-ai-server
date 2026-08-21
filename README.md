@@ -74,10 +74,16 @@ If your config references environment variables such as `CHAT_API_KEY`,
 put them in `~/.config/atuin-ai/atuin-ai-server.env`:
 
 ```sh
-AUTH_TOKEN=change-me
+AUTH_TOKEN=<your-secret-token-here>
 CHAT_API_KEY=...
 BRAVE_API_KEY=...
 FIRECRAWL_API_KEY=...
+```
+
+Then lock the file down so other local users cannot read it:
+
+```sh
+chmod 600 ~/.config/atuin-ai/atuin-ai-server.env
 ```
 
 Then enable and start the service:
