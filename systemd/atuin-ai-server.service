@@ -9,7 +9,6 @@ WorkingDirectory=%h/.local/opt/atuin-ai-server
 Environment=CHAT_CONFIG=%h/.config/atuin-ai/config.toml
 EnvironmentFile=-%h/.config/atuin-ai/atuin-ai-server.env
 ExecStart=%h/.local/opt/atuin-ai-server/bin/atuin_ai_server start
-ExecStop=%h/.local/opt/atuin-ai-server/bin/atuin_ai_server stop
 Restart=on-failure
 RestartSec=5
 
