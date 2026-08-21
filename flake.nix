@@ -39,7 +39,7 @@
             install_dir="$HOME/.local/opt/atuin-ai-server"
             config_dir="$HOME/.config/atuin-ai"
             systemd_user_dir="$HOME/.config/systemd/user"
-            cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/atuin-ai-server"
+            cache_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/atuin-ai-server"
             build_dir="$(mktemp -d)"
             source_dir="$build_dir/src"
 
