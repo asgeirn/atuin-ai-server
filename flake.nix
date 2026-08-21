@@ -139,22 +139,34 @@
         }
       );
 
-      packages = forAllSystems (system: {
-        atuin-ai-server-installer = mkInstaller system;
-        default = mkInstaller system;
-      });
+      packages = forAllSystems (
+        system:
+        let
+          installer = mkInstaller system;
+        in
+        {
+          atuin-ai-server-installer = installer;
+          default = installer;
+        }
+      );
 
-      apps = forAllSystems (system: {
-        install = {
-          type = "app";
-          program = "${mkInstaller system}/bin/atuin-ai-server-installer";
-        };
+      apps = forAllSystems (
+        system:
+        let
+          installer = mkInstaller system;
+        in
+        {
+          install = {
+            type = "app";
+            program = "${installer}/bin/atuin-ai-server-installer";
+          };
 
-        default = {
-          type = "app";
-          program = "${mkInstaller system}/bin/atuin-ai-server-installer";
-        };
-      });
+          default = {
+            type = "app";
+            program = "${installer}/bin/atuin-ai-server-installer";
+          };
+        }
+      );
 
       formatter = forAllSystems (
         system: (mkPkgs system).nixfmt-rfc-style

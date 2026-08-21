@@ -72,8 +72,7 @@ If you want the installer as a package without running it immediately:
 nix build .#atuin-ai-server-installer
 ```
 
-Without Nix, build a release and install it somewhere under your home
-directory:
+To build and install the release manually from a checkout, run:
 
 ```sh
 nix develop
