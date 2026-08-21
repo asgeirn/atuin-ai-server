@@ -37,7 +37,11 @@ endpoint = "http://host.docker.internal:11434/v1"
 Requires Erlang/OTP, Elixir, and Gleam (versions in the repository's
 `.tool-versions` file).
 
+On NixOS 26.05, `nix develop` uses the included `flake.nix` to provide
+matching toolchain versions from nixpkgs.
+
 ```sh
+nix develop
 cp config.example.toml config.toml   # then edit
 mix deps.get
 mix run --no-halt
